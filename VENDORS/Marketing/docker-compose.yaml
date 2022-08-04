@@ -1,0 +1,207 @@
+version: "2"
+
+networks:
+  test:
+
+services:
+  # ca-marketing:
+  #   image: hyperledger/fabric-ca
+  #   environment:
+  #     - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+  #     - FABRIC_CA_SERVER_CA_NAME=ca.marketing.mercadona.es
+  #     - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.marketing.mercadona.es-cert.pem
+  #     - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/priv_sk
+  #     - FABRIC_CA_SERVER_TLS_ENABLED=true
+  #     - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-tls/tlsca.marketing.mercadona.es-cert.pem
+  #     - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-tls/priv_sk
+  #   ports:
+  #     - "7054:7054"
+  #   command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
+  #   volumes:
+  #     - ./crypto-config/peerOrganizations/marketing.mercadona.es/ca/:/etc/hyperledger/fabric-ca-server-config
+  #     - ./crypto-config/peerOrganizations/marketing.mercadona.es/tlsca/:/etc/hyperledger/fabric-ca-server-tls
+  #   container_name: ca.marketing.mercadona.es
+  #   hostname: ca.marketing.mercadona.es
+  #   networks:
+  #     - test
+
+
+  couchdb8:
+    container_name: couchdb8
+    image: hyperledger/fabric-couchdb
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    ports:
+      - 13984:5984
+    networks:
+      - test
+
+  couchdb9:
+    container_name: couchdb9
+    image: hyperledger/fabric-couchdb
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    ports:
+      - 14984:5984
+    networks:
+      - test
+
+  marketing1.marketing.mercadona.es:
+    container_name: marketing1.marketing.mercadona.es
+    extends:
+      file: base.yaml
+      service: peer-base
+    environment:
+      - FABRIC_LOGGING_SPEC=DEBUG
+      - ORDERER_GENERAL_LOGLEVEL=DEBUG
+      - CORE_PEER_LOCALMSPID=Marketing1MSP
+
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=artifacts_test
+
+      - CORE_PEER_ID=marketing1.marketing.mercadona.es
+      - CORE_PEER_ADDRESS=marketing1.marketing.mercadona.es:15051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:15051
+      - CORE_PEER_CHAINCODEADDRESS=marketing1.marketing.mercadona.es:15052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:15052
+      # Peer used to bootstrap gossip within organisation
+      - CORE_PEER_GOSSIP_BOOTSTRAP=marketing2.marketing.mercadona.es:16051
+      # Exposed for discovery Service
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=marketing1.marketing.mercadona.es:15051
+
+      # - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:9440
+
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb8:13984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+      - CORE_METRICS_PROVIDER=prometheus
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/crypto/peer/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/crypto/peer/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/crypto/peer/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/crypto/peer/msp
+    depends_on:
+      - couchdb8
+    ports:
+      - 15051:15051
+    volumes:
+      - ./crypto-config/peerOrganizations/marketing.mercadona.es/peers/marketing1.marketing.mercadona.es/msp:/etc/hyperledger/crypto/peer/msp
+      - ./crypto-config/peerOrganizations/marketing.mercadona.es/peers/marketing1.marketing.mercadona.es/tls:/etc/hyperledger/crypto/peer/tls
+      - /var/run/:/host/var/run/
+      - ./:/etc/hyperledger/channel/
+    networks:
+      - test
+    extra_hosts:
+
+      - "orderer.mercadona.es:34.175.100.152"
+      - "orderer2.mercadona.es:34.175.100.152"
+      - "orderer3.mercadona.es:34.175.100.152"
+      - "marketing1.marketing.mercadona.es:34.175.190.5"
+      - "marketing2.marketing.mercadona.es:34.175.190.5"
+      - "marketing1.marketing.mercadona.es:34.175.141.239"
+      - "marketing2.marketing.mercadona.es:34.175.141.239"
+      - "marketing1.marketing.mercadona.es:34.175.191.13"
+      - "marketing2.marketing.mercadona.es:34.175.191.13"
+
+
+  marketing2.marketing.mercadona.es:
+    container_name: marketing2.marketing.mercadona.es
+    extends:
+      file: base.yaml
+      service: peer-base
+    environment:
+      - FABRIC_LOGGING_SPEC=DEBUG
+      - ORDERER_GENERAL_LOGLEVEL=debug
+      - CORE_PEER_LOCALMSPID=MarketingMSP
+
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=artifacts_test
+
+      - CORE_PEER_ID=marketing2.marketing.mercadona.es
+      - CORE_PEER_ADDRESS=marketing2.marketing.mercadona.es:16051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:16051
+      - CORE_PEER_CHAINCODEADDRESS=marketing2.marketing.mercadona.es:16052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:16052
+      # Exposed for discovery Service
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=marketing2.marketing.mercadona.es:16051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=marketing1.marketing.mercadona.es:15051
+
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb9:14984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+      - CORE_METRICS_PROVIDER=prometheus
+      # - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:9440
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/crypto/peer/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/crypto/peer/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/crypto/peer/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/crypto/peer/msp
+    ports:
+      - 16051:16051
+    volumes:
+      - ./crypto-config/peerOrganizations/marketing.mercadona.es/peers/marketing2.marketing.mercadona.es/msp:/etc/hyperledger/crypto/peer/msp
+      - ./crypto-config/peerOrganizations/marketing.mercadona.es/peers/marketing2.marketing.mercadona.es/tls:/etc/hyperledger/crypto/peer/tls
+      - /var/run/:/host/var/run/
+      - ./:/etc/hyperledger/channel/
+    networks:
+      - test
+
+    extra_hosts:
+
+      - "orderer.mercadona.es:34.175.100.152"
+      - "orderer2.mercadona.es:34.175.100.152"
+      - "orderer3.mercadona.es:34.175.100.152"
+      - "marketing1.marketing.mercadona.es:34.175.190.5"
+      - "marketing2.marketing.mercadona.es:34.175.190.5"
+      - "marketing1.marketing.mercadona.es:34.175.141.239"
+      - "marketing2.marketing.mercadona.es:34.175.141.239"
+      - "marketing1.marketing.mercadona.es:34.175.191.13"
+      - "marketing2.marketing.mercadona.es:34.175.191.13"
+
+  cli:
+    container_name: cli
+    image: hyperledger/fabric-tools
+    tty: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=marketing1.marketing.mercadona.es:15051
+      - CORE_PEER_LOCALMSPID=MarketingMSP
+      # - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/channel/crypto-config/marketing1MSP
+
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/channel/crypto-config/peerOrganizations/marketing.mercadona.es/peers/marketing1.marketing.mercadona.es/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/channel/crypto-config/peerOrganizations/marketing.mercadona.es/peers/marketing1.marketing.mercadona.es/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/channel/crypto-config/peerOrganizations/marketing.mercadona.es/peers/marketing1.marketing.mercadona.es/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/channel/crypto-config/peerOrganizations/marketing.mercadona.es/users/Admin@marketing.mercadona.es/msp
+
+      - CORE_CHAINCODE_KEEPALIVE=10 
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    networks:
+      - test
+
+    extra_hosts:
+
+      - "orderer.mercadona.es:34.175.100.152"
+      - "orderer2.mercadona.es:34.175.100.152"
+      - "orderer3.mercadona.es:34.175.100.152"
+      - "marketing1.marketing.mercadona.es:34.175.190.5"
+      - "marketing2.marketing.mercadona.es:34.175.190.5"
+      - "marketing1.marketing.mercadona.es:34.175.141.239"
+      - "marketing2.marketing.mercadona.es:34.175.141.239"
+      - "marketing1.marketing.mercadona.es:34.175.191.13"
+      - "marketing2.marketing.mercadona.es:34.175.191.13"
+    volumes:
+      - /var/run/:/host/var/run/
+      # - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+      - ./crypto-config/peerOrganizations/marketing.mercadona.es/:/etc/hyperledger/channel/crypto-config/peerOrganizations/marketing.mercadona.es/
+      - ../web/crypto-config/peerOrganizations/web.mercadona.es/:/etc/hyperledger/channel/crypto-config/peerOrganizations/web.mercadona.es/
+      - ../beehive/crypto-config/peerOrganizations/bh.mercadona.es/:/etc/hyperledger/channel/crypto-config/peerOrganizations/bh.mercadona.es/
+      - ../shop/crypto-config/peerOrganizationss/shop.mercadona.es/:/etc/hyperledger/channel/crypto-config/peerOrganizationss/shop.mercadona.es/
+      - ../wh/crypto-config/peerOrganizationss/wh.mercadona.es/:/etc/hyperledger/channel/crypto-config/peerOrganizationss/wh.mercadona.es/
+      - ../orderer/crypto-config/ordererOrganizations/mercadona.es/:/etc/hyperledger/channel/crypto-config/ordererOrganizations/mercadona.es/
