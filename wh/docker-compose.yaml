@@ -95,15 +95,19 @@ services:
       - test
     extra_hosts:
 
-      - "orderer.mercadona.es:34.175.100.152"
-      - "orderer2.mercadona.es:34.175.100.152"
-      - "orderer3.mercadona.es:34.175.100.152"
-      - "wh1.wh.mercadona.es:34.175.190.5"
-      - "wh2.wh.mercadona.es:34.175.190.5"
+      - "orderer.mercadona.es:34.175.190.5"
+      - "orderer2.mercadona.es:34.175.190.5"
+      - "orderer3.mercadona.es:34.175.190.5"
+      - "shop1.shop.mercadona.es:34.175.191.13"
+      - "shop2.shop.mercadona.es:334.175.191.13"
+      - "web1.web.mercadona.es:34.175.100.152"
+      - "web2.web.mercadona.es:34.175.100.152"
+      - "bh1.bh.mercadona.es:34.175.110.208"
+      - "bh2.bh.mercadona.es:34.175.110.208"
       - "wh1.wh.mercadona.es:34.175.141.239"
       - "wh2.wh.mercadona.es:34.175.141.239"
-      - "wh1.wh.mercadona.es:34.175.191.13"
-      - "wh2.wh.mercadona.es:34.175.191.13"
+      - "marketing1.marketing.mercadona.es:34.175.54.236"
+      - "marketing2.marketing.mercadona.es:34.175.54.236"
 
 
   wh2.wh.mercadona.es:
@@ -150,15 +154,19 @@ services:
 
     extra_hosts:
 
-      - "orderer.mercadona.es:34.175.100.152"
-      - "orderer2.mercadona.es:34.175.100.152"
-      - "orderer3.mercadona.es:34.175.100.152"
-      - "wh1.wh.mercadona.es:34.175.190.5"
-      - "wh2.wh.mercadona.es:34.175.190.5"
+      - "orderer.mercadona.es:34.175.190.5"
+      - "orderer2.mercadona.es:34.175.190.5"
+      - "orderer3.mercadona.es:34.175.190.5"
+      - "shop1.shop.mercadona.es:34.175.191.13"
+      - "shop2.shop.mercadona.es:334.175.191.13"
+      - "web1.web.mercadona.es:34.175.100.152"
+      - "web2.web.mercadona.es:34.175.100.152"
+      - "bh1.bh.mercadona.es:34.175.110.208"
+      - "bh2.bh.mercadona.es:34.175.110.208"
       - "wh1.wh.mercadona.es:34.175.141.239"
       - "wh2.wh.mercadona.es:34.175.141.239"
-      - "wh1.wh.mercadona.es:34.175.191.13"
-      - "wh2.wh.mercadona.es:34.175.191.13"
+      - "marketing1.marketing.mercadona.es:34.175.54.236"
+      - "marketing2.marketing.mercadona.es:34.175.54.236"
 
   cli:
     container_name: cli
@@ -187,15 +195,19 @@ services:
 
     extra_hosts:
 
-      - "orderer.mercadona.es:34.175.100.152"
-      - "orderer2.mercadona.es:34.175.100.152"
-      - "orderer3.mercadona.es:34.175.100.152"
-      - "wh1.wh.mercadona.es:34.175.190.5"
-      - "wh2.wh.mercadona.es:34.175.190.5"
+      - "orderer.mercadona.es:34.175.190.5"
+      - "orderer2.mercadona.es:34.175.190.5"
+      - "orderer3.mercadona.es:34.175.190.5"
+      - "shop1.shop.mercadona.es:34.175.191.13"
+      - "shop2.shop.mercadona.es:334.175.191.13"
+      - "web1.web.mercadona.es:34.175.100.152"
+      - "web2.web.mercadona.es:34.175.100.152"
+      - "bh1.bh.mercadona.es:34.175.110.208"
+      - "bh2.bh.mercadona.es:34.175.110.208"
       - "wh1.wh.mercadona.es:34.175.141.239"
       - "wh2.wh.mercadona.es:34.175.141.239"
-      - "wh1.wh.mercadona.es:34.175.191.13"
-      - "wh2.wh.mercadona.es:34.175.191.13"
+      - "marketing1.marketing.mercadona.es:34.175.54.236"
+      - "marketing2.marketing.mercadona.es:34.175.54.236"
     volumes:
       - /var/run/:/host/var/run/
       # - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/

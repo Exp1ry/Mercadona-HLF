@@ -1,0 +1,143 @@
+version: "2"
+
+networks:
+  test:
+
+services:
+  orderer.mercadona.es:
+    container_name: orderer.mercadona.es
+    image: hyperledger/fabric-orderer:2.1
+    dns_search: .
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=info
+      - FABRIC_LOGGING_SPEC=INFO
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_KAFKA_VERBOSE=true
+      - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_METRICS_PROVIDER=prometheus
+      - ORDERER_OPERATIONS_LISTENADDRESS=0.0.0.0:8443
+      - ORDERER_GENERAL_LISTENPORT=7050
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderers
+    command: orderer
+    ports:
+      - 7050:7050
+      - 8443:8443
+    networks:
+      - test
+    volumes:
+      - ../../artifacts/channel/genesis.block:/var/hyperledger/orderer/genesis.block
+      - ./crypto-config/ordererOrganizations/mercadona.es/orderers/orderer.mercadona.es/msp:/var/hyperledger/orderer/msp
+      - ./crypto-config/ordererOrganizations/mercadona.es/orderers/orderer.mercadona.es/tls:/var/hyperledger/orderer/tls
+  
+  orderer2.mercadona.es:
+    container_name: orderer2.mercadona.es
+    image: hyperledger/fabric-orderer:2.1
+    dns_search: .
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=debug
+      - FABRIC_LOGGING_SPEC=DEBUG
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_KAFKA_VERBOSE=true
+      - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_METRICS_PROVIDER=prometheus
+      - ORDERER_OPERATIONS_LISTENADDRESS=0.0.0.0:8443
+      - ORDERER_GENERAL_LISTENPORT=8050
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderers
+    command: orderer
+    ports:
+      - 8050:8050
+      - 8444:8443
+    networks:
+      - test
+
+    extra_hosts:
+
+      - "orderer.mercadona.es:34.175.190.5"
+      - "orderer2.mercadona.es:34.175.190.5"
+      - "orderer3.mercadona.es:34.175.190.5"
+      - "shop1.shop.mercadona.es:34.175.191.13"
+      - "shop2.shop.mercadona.es:334.175.191.13"
+      - "web1.web.mercadona.es:34.175.100.152"
+      - "web2.web.mercadona.es:34.175.100.152"
+      - "bh1.bh.mercadona.es:34.175.110.208"
+      - "bh2.bh.mercadona.es:34.175.110.208"
+      - "wh1.wh.mercadona.es:34.175.141.239"
+      - "wh2.wh.mercadona.es:34.175.141.239"
+      - "marketing1.marketing.mercadona.es:34.175.54.236"
+      - "marketing2.marketing.mercadona.es:34.175.54.236"
+    volumes:
+      - ../../artifacts/channel/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+      - ./crypto-config/ordererOrganizations/mercadona.es/orderers/orderer2.mercadona.es/msp:/var/hyperledger/orderer/msp
+      - ./crypto-config/ordererOrganizations/mercadona.es/orderers/orderer2.mercadona.es/tls:/var/hyperledger/orderer/tls
+
+
+  orderer3.mercadona.es:
+    container_name: orderer3.mercadona.es
+    image: hyperledger/fabric-orderer:2.1
+    dns_search: .
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=debug
+      - FABRIC_LOGGING_SPEC=DEBUG
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_KAFKA_VERBOSE=true
+      - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_METRICS_PROVIDER=prometheus
+      - ORDERER_OPERATIONS_LISTENADDRESS=0.0.0.0:8443
+      - ORDERER_GENERAL_LISTENPORT=9050
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderers
+    command: orderer
+    ports:
+      - 9050:9050
+      - 8445:8443
+    networks:
+      - 
+      
+    extra_hosts:
+
+      - "orderer.mercadona.es:34.175.190.5"
+      - "orderer2.mercadona.es:34.175.190.5"
+      - "orderer3.mercadona.es:34.175.190.5"
+      - "shop1.shop.mercadona.es:34.175.191.13"
+      - "shop2.shop.mercadona.es:334.175.191.13"
+      - "web1.web.mercadona.es:34.175.100.152"
+      - "web2.web.mercadona.es:34.175.100.152"
+      - "bh1.bh.mercadona.es:34.175.110.208"
+      - "bh2.bh.mercadona.es:34.175.110.208"
+      - "wh1.wh.mercadona.es:34.175.141.239"
+      - "wh2.wh.mercadona.es:34.175.141.239"
+      - "marketing1.marketing.mercadona.es:34.175.54.236"
+      - "marketing2.marketing.mercadona.es:34.175.54.236"
+    volumes:
+      - ../../artifacts/channel/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+      - ./crypto-config/ordererOrganizations/mercadona.es/orderers/orderer3.mercadona.es/msp:/var/hyperledger/orderer/msp
+      - ./crypto-config/ordererOrganizations/mercadona.es/orderers/orderer3.mercadona.es/tls:/var/hyperledger/orderer/tls
