@@ -1,0 +1,327 @@
+Organizations:
+
+    - &OrdererOrg
+        Name: OrdererOrg
+        ID: OrdererMSP
+        MSPDir: ../../orderer/crypto-config/ordererOrganizations/mercadona.es/msp
+
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('OrdererMSP.admin')"
+
+    - &Shop
+        Name: ShopMSP
+        ID: ShopMSP
+
+        MSPDir: ../../shop/crypto-config/peerOrganizations/shop.mercadona.es/msp
+
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('ShopMSP.admin', 'ShopMSP.peer', 'ShopMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('ShopMSP.admin', 'ShopMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('ShopMSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('ShopMSP.peer')"
+
+        AnchorPeers:
+            - Host: shop1.shop.mercadona.es
+              Port: 8051
+
+    - &Web
+        Name: WebMSP
+
+        ID: WebMSP
+
+        MSPDir: ../../web/crypto-config/peerOrganizations/web.mercadona.es/msp
+
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('WebMSP.admin', 'WebMSP.peer', 'WebMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('WebMSP.admin', 'WebMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('WebMSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('WebMSP.peer')"
+
+        AnchorPeers:
+            - Host: web1.web.mercadona.es
+              Port: 9051
+
+    - &Beehive
+        Name: BeehiveMSP
+
+        ID: BeehiveMSP
+
+        MSPDir: ../../beehive/crypto-config/peerOrganizations/bh.mercadona.es/msp
+
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('BeehiveMSP.admin', 'BeehiveMSP.peer', 'BeehiveMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('BeehiveMSP.admin', 'BeehiveMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('BeehiveMSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('BeehiveMSP.peer')"
+
+        AnchorPeers:
+            - Host: bh1.bh.mercadona.es
+              Port: 10051
+
+    - &Warehouse
+        Name: WarehouseMSP
+
+        ID: WarehouseMSP
+
+        MSPDir: ../../wh/crypto-config/peerOrganizations/wh.mercadona.es/msp
+
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('WarehouseMSP.admin', 'WarehouseMSP.peer', 'WarehouseMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('WarehouseMSP.admin', 'WarehouseMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('WarehouseMSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('WarehouseMSP.peer')"
+
+        AnchorPeers:
+            - Host: wh1.wh.mercadona.es
+              Port: 11051
+
+    - &Marketing
+        Name: MarketingMSP
+
+        ID: MarketingMSP
+
+        MSPDir: ../../VENDORS/Marketing/crypto-config/peerOrganizations/marketing.mercadona.es/msp
+
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('MarketingMSP.admin', 'MarketingMSP.peer', 'MarketingMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('MarketingMSP.admin', 'MarketingMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('MarketingMSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('MarketingMSP.peer')"
+
+        AnchorPeers:
+            - Host: marketing1.marketing.mercadona.es
+              Port: 12051
+
+Capabilities:
+    Channel: &ChannelCapabilities
+        V2_0: true
+
+    Orderer: &OrdererCapabilities
+        V2_0: true
+
+    Application: &ApplicationCapabilities
+        V2_0: true
+
+Application: &ApplicationDefaults
+
+    Organizations:
+
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+        LifecycleEndorsement:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Endorsement"
+        Endorsement:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Endorsement"
+
+    Capabilities:
+        <<: *ApplicationCapabilities
+
+Orderer: &OrdererDefaults
+
+    OrdererType: etcdraft
+
+    EtcdRaft:
+        Consenters:
+        - Host: orderer.mercadona.es
+          Port: 7050
+          ClientTLSCert: ../../orderer/crypto-config/ordererOrganizations/mercadona.es/orderers/orderer.mercadona.es/tls/server.crt
+          ServerTLSCert: ../../orderer/crypto-config/ordererOrganizations/mercadona.es/orderers/orderer.mercadona.es/tls/server.crt
+    Addresses:
+        - orderer.mercadona.es:7050
+
+    BatchTimeout: 2s
+    BatchSize:
+        MaxMessageCount: 10
+        AbsoluteMaxBytes: 99 MB
+        PreferredMaxBytes: 512 KB
+
+    Organizations:
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+        BlockValidation:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+
+Channel: &ChannelDefaults
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+
+    Capabilities:
+        <<: *ChannelCapabilities
+
+Profiles:
+
+  MercadonaMain:
+      <<: *ChannelDefaults
+      Orderer:
+          <<: *OrdererDefaults
+          Organizations:
+              - <<: *OrdererOrg
+      Consortiums:
+        Mercadona:
+            Organizations:
+                  - <<: *Shop
+                  - <<: *Web
+                  - <<: *Beehive    
+                  - <<: *Warehouse
+                  - <<: *Marketing
+
+      Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                  - <<: *Shop
+                  - <<: *Web
+                  - <<: *Beehive    
+                  - <<: *Warehouse
+                  - <<: *Marketing
+
+  OrdererGenesis:
+        <<: *ChannelDefaults
+        Capabilities:
+            <<: *ChannelCapabilities
+        Orderer:
+            <<: *OrdererDefaults
+            OrdererType: etcdraft
+            EtcdRaft:
+                Consenters:
+                - Host: orderer.mercadona.es
+                  Port: 7050
+                  ClientTLSCert: ../../orderer/crypto-config/ordererOrganizations/mercadona.es/orderers/orderer.mercadona.es/tls/server.crt
+                  ServerTLSCert: ../../orderer/crypto-config/ordererOrganizations/mercadona.es/orderers/orderer.mercadona.es/tls/server.crt
+                - Host: orderer2.mercadona.es
+                  Port: 8050
+                  ClientTLSCert: ../../orderer/crypto-config/ordererOrganizations/mercadona.es/orderers/orderer2.mercadona.es/tls/server.crt
+                  ServerTLSCert: ../../orderer/crypto-config/ordererOrganizations/mercadona.es/orderers/orderer2.mercadona.es/tls/server.crt
+                - Host: orderer3.mercadona.es
+                  Port: 9050
+                  ClientTLSCert: ../../orderer/crypto-config/ordererOrganizations/mercadona.es/orderers/orderer3.mercadona.es/tls/server.crt
+                  ServerTLSCert: ../../orderer/crypto-config/ordererOrganizations/mercadona.es/orderers/orderer3.mercadona.es/tls/server.crt
+            Addresses:
+                - orderer.mercadona.es:7050
+                - orderer2.mercadona.es:8050
+                - orderer3.mercadona.es:9050
+
+            Organizations:
+            - *OrdererOrg
+            Capabilities:
+                <<: *OrdererCapabilities
+        Consortiums:
+            Mercadona:
+                Organizations:
+                - *Shop
+                - *Web
+                - *Beehive
+                - *Warehouse
+                - *Marketing
+
+    
+   
+   
+   
+  WebChannel:
+    <<: *ChannelDefaults
+    Consortium: MercadonaMain
+        
+    Application:
+        <<: *ApplicationDefaults
+        
+        Organizations:
+            - <<: *Beehive 
+            - <<: *Web
+
+  ShopChannel:
+    <<: *ChannelDefaults
+    Consortium: MercadonaMain
+        
+    Application:
+        <<: *ApplicationDefaults
+        
+        Organizations:
+            - <<: *Warehouse 
+            - <<: *Shop
+
+  VendorsChannel:
+    <<: *ChannelDefaults
+    Consortium: MercadonaMain
+        
+    Application:
+        <<: *ApplicationDefaults
+        
+        Organizations:
+            - <<: *Shop 
+            - <<: *Web
+            - <<: *Marketing

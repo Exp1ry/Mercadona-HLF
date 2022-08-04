@@ -1,0 +1,80 @@
+
+OrdererOrgs:
+  - Name: Orderer
+    Domain: mercadona.es
+    EnableNodeOUs: true
+
+    Specs:
+      - Hostname: orderer
+        SANS:
+            - "localhost"
+            - "127.0.0.1"
+      - Hostname: orderer2
+        SANS:
+          - "localhost"
+          - "127.0.0.1"
+      - Hostname: orderer3
+        SANS:
+            - "localhost"
+            - "127.0.0.1"
+
+PeerOrgs:
+  - Name: Shop
+    Domain: shop.mercadona.es
+    EnableNodeOUs: true
+
+    Template:
+      Count: 2
+      SANS:
+        - "localhost"
+
+    Users:
+      Count: 1
+
+  - Name: Web
+    Domain: web.mercadona.es
+    EnableNodeOUs: true
+
+    Template:
+      Count: 2
+      SANS:
+        - "localhost"
+
+    Users:
+      Count: 1
+
+  - Name: Beehive
+    Domain: bh.mercadona.es
+    EnableNodeOUs: true
+
+    Template:
+      Count: 2
+      SANS:
+        - "localhost"
+
+    Users:
+      Count: 1
+
+  - Name: Warehouse
+    Domain: wh.mercadona.es
+    EnableNodeOUs: true
+
+    Template:
+      Count: 2
+      SANS:
+        - "localhost"
+
+    Users:
+      Count: 1
+      
+  - Name: Marketing
+    Domain: marketing.mercadona.es
+    EnableNodeOUs: true
+
+    Template:
+      Count: 2
+      SANS:
+        - "localhost"
+
+    Users:
+      Count: 1
